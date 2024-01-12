@@ -24,7 +24,7 @@ class LocalActorManager(models.Manager):
     def get_by_url(self, url):
         parsed = urllib.parse.urlparse(url)
         match = resolve(parsed.path)
-        if match.url_name == 'profile':
+        if match.url_name == 'activitypub-profile':
             return self.get(preferred_username=match.kwargs['username'], domain=parsed.netloc)
         else:
             return None
@@ -69,7 +69,7 @@ class LocalActor(models.Model):
         return self.preferred_username
 
     def get_absolute_url(self):
-        return reverse('profile', kwargs={'username': self.preferred_username})
+        return reverse('activitypub-profile', kwargs={'username': self.preferred_username})
 
     def save(self, *args, **kwargs):
         if not self.id:

@@ -24,7 +24,7 @@ def webfinger(request):
         if parsed.scheme != request.scheme or parsed.netloc != request.get_host():
             return JsonResponse({'error': 'invalid resource'}, status=404)
         url = resolve(parsed.path)
-        if url.url_name != 'profile':
+        if url.url_name != 'activitypub-profile':
             return JsonResponse({'error': 'unknown resource'}, status=404)
         username = url.kwargs.get('username')
         domain = request.get_host()
@@ -42,7 +42,7 @@ def webfinger(request):
             {
                 'rel': 'self',
                 'type': 'application/activity+json',
-                'href': request.build_absolute_uri(reverse('profile', kwargs={'username': actor.preferred_username})),
+                'href': request.build_absolute_uri(reverse('activitypub-profile', kwargs={'username': actor.preferred_username})),
             }
         ]
     }
@@ -73,14 +73,14 @@ def profile(request, username):
         'preferredUsername': actor.preferred_username,
         'name': actor.name,
         'summary': actor.summary,
-        'id': request.build_absolute_uri(reverse('profile', kwargs={'username': actor.preferred_username})),
-        'followers': request.build_absolute_uri(reverse('followers', kwargs={'username': actor.preferred_username})),
-        'inbox': request.build_absolute_uri(reverse('inbox', kwargs={'username': actor.preferred_username})),
-        'outbox': request.build_absolute_uri(reverse('outbox', kwargs={'username': actor.preferred_username})),
+        'id': request.build_absolute_uri(reverse('activitypub-profile', kwargs={'username': actor.preferred_username})),
+        'followers': request.build_absolute_uri(reverse('activitypub-followers', kwargs={'username': actor.preferred_username})),
+        'inbox': request.build_absolute_uri(reverse('activitypub-inbox', kwargs={'username': actor.preferred_username})),
+        'outbox': request.build_absolute_uri(reverse('activitypub-outbox', kwargs={'username': actor.preferred_username})),
         'publicKey': {
             'id': request.build_absolute_uri(
-                reverse('profile', kwargs={'username': actor.preferred_username})) + '#main-key',
-            'owner': request.build_absolute_uri(reverse('profile', kwargs={'username': actor.preferred_username})),
+                reverse('activitypub-profile', kwargs={'username': actor.preferred_username})) + '#main-key',
+            'owner': request.build_absolute_uri(reverse('activitypub-profile', kwargs={'username': actor.preferred_username})),
             'publicKeyPem': actor.public_key,
         }
     }
@@ -109,7 +109,7 @@ def followers(request, username):
     query = Follower.objects.order_by('-follow_date').select_related('remote_actor').filter(following=actor)
     paginator = Paginator(query, 10)
     page_num_arg = request.GET.get('page', None)
-    followers_url = request.build_absolute_uri(reverse('followers', kwargs={'username': actor.preferred_username}))
+    followers_url = request.build_absolute_uri(reverse('activitypub-followers', kwargs={'username': actor.preferred_username}))
     data = {
         '@context': 'https://www.w3.org/ns/activitystreams',
         'type': 'OrderedCollection',
@@ -173,7 +173,7 @@ def inbox(request, username):
                 ],
                 'id': request.build_absolute_uri(f'/{uuid.uuid4()}'),
                 'type': 'Accept',
-                'actor': request.build_absolute_uri(reverse('profile', kwargs={'username': actor.preferred_username})),
+                'actor': request.build_absolute_uri(reverse('activitypub-profile', kwargs={'username': actor.preferred_username})),
                 'object': activity,
             }
 
@@ -273,7 +273,7 @@ def outbox(request, username):
 
     paginator = Paginator(query, 10)
     page_num_arg = request.GET.get('page', None)
-    outbox_url = request.build_absolute_uri(reverse('outbox', kwargs={'username': actor.preferred_username}))
+    outbox_url = request.build_absolute_uri(reverse('activitypub-outbox', kwargs={'username': actor.preferred_username}))
     data = {
         '@context': 'https://www.w3.org/ns/activitystreams',
         'type': 'OrderedCollection',
