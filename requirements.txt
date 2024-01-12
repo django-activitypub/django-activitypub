@@ -1,0 +1,6 @@
+django>=4.2
+cryptography>=41.0.0
+requests>=2.31.0
+Markdown>=3.5.0
+django-tree-queries>=0.16.1
+html-sanitizer>=2.2.0

@@ -1,0 +1,58 @@
+{% load static %}
+{% load pub_extras %}
+{% load humanize %}
+
+<div class="activity-container">
+    <div class="activity-details">
+        {% if note %}
+        <div class="activity-pill">
+            {{ note.likes.count }} Likes
+        </div>
+        <div class="activity-pill">
+            {{ note.announces.count }} Shares
+        </div>
+        <div class="activity-pill">
+            {{ replies.count }} Replies
+        </div>
+        {% else %}
+        <div class="activity-pill">
+            Not available on ActivityPub
+        </div>
+        {% endif %}
+    </div>
+
+    {% if replies %}
+        <div class="replies">
+        {% for note in replies %}
+            <div class="reply reply-depth-{{ note.tree_depth|max_depth:5 }}">
+                <div class="reply-header">
+                    <div class="ap-identity">
+                        <div class="remote-avatar">
+                            <a href="{{ note.actor.account_url }}" target="_blank">
+                            {% if note.actor.icon_url %}
+                                <img src="{{ note.actor.icon_url }}" alt="{{ note.actor.handle }} icon" />
+                            {% else %}
+                                <img class="blank-icon" src="{% static 'pub/img/iconmonstr-user-20.svg' %}" alt="{{ note.actor.handle }} icon" />
+                            {% endif %}
+                            </a>
+                        </div>
+                        <div class="reply-details">
+                            <div class="remote-username">
+                                <a href="{{ note.actor.account_url }}" target="_blank">{{ note.actor.handle }}</a>
+                            </div>
+                            <div class="reply-time">
+                                <a href="{{ note.content_url }}" target="_blank">{{ note.published_at|naturaltime }}</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="remote-content">
+                    {{ note.content|sanitize_content }}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+</div>
