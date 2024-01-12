@@ -1,6 +1,6 @@
-=======
+==================
 django-activitypub
-=======
+==================
 
 This is an experimental Django app implementing the `ActivityPub <https://www.w3.org/TR/activitypub/>`_ protocol with
 the intent of allowing any Django project to be federated with other ActivityPub-compliant servers.
