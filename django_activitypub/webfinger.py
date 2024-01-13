@@ -49,7 +49,6 @@ def fetch_remote_profile(url):
     try:
         res = requests.get(url, headers={'Accept': 'application/activity+json'})
         res.raise_for_status()
+        return res.json()
     except requests.RequestException as e:
         raise WebfingerException(e)
-
-    return res.json()

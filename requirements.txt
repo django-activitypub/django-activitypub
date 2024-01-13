@@ -5,3 +5,4 @@ Markdown>=3.5.0
 django-tree-queries>=0.16.1
 html-sanitizer>=2.2.0
 Pillow>=10.1.0
+responses>=0.24.1
