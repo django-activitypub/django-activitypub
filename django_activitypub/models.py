@@ -12,6 +12,7 @@ from cryptography.hazmat.primitives import serialization
 from tree_queries.models import TreeNode, TreeQuerySet
 
 from django_activitypub.signed_requests import signed_post
+from django_activitypub.utils.dates import format_datetime, parse_datetime
 from django_activitypub.webfinger import fetch_remote_profile, finger
 
 
@@ -288,14 +289,6 @@ def parse_mentions(content):
             'href': actor.url,
             'name': f'{key[0]}@{key[1]}',
         }
-
-
-def format_datetime(time):
-    return time.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-
-def parse_datetime(time):
-    return timezone.datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
 
 
 def send_create_note_to_followers(base_url, note):
