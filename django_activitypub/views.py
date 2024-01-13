@@ -310,11 +310,8 @@ def validate_post_request(request, activity):
 
     try:
         actor_data = fetch_remote_profile(activity['actor'])
-    except WebfingerException as e:
-        if e.error.response.status_code == 410 and activity['type'] == 'Delete':
-            # special case for deletes, the resulting actor will be gone from the server
-            return JsonResponse({}, status=410)
-        return JsonResponse({'error': 'validate - error fetching remote profile'}, status=401)
+    except WebfingerException:
+        return JsonResponse({'error': 'validate - error fetching remote profile'}, status=400)
 
     checker = SignatureChecker(actor_data.get('publicKey'))
     result = checker.validate(
